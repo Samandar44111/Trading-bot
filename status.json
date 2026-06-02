@@ -1,10 +1,10 @@
 {
-  "updated_at": "2026-06-02T22:56:09.302252+00:00",
+  "updated_at": "2026-06-02T22:57:10.880655+00:00",
   "running": true,
   "strategy": "MTF 3m+5m+15m RSI",
   "position": "FLAT",
   "equity": 100.0,
-  "btc_price": 66707.99,
+  "btc_price": 66721.2,
   "last_trade": {
     "side": "LONG",
     "entry_price": 68500.0,
