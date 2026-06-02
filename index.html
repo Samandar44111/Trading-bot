@@ -21,69 +21,41 @@ body {
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
-  padding: 20px;
+  padding: 16px;
+  -webkit-text-size-adjust: 100%;
 }
 .container { max-width: 900px; margin: 0 auto; }
-h1 {
-  font-size: 28px;
-  margin-bottom: 4px;
-}
-.subtitle {
-  color: var(--muted);
-  font-size: 14px;
-  margin-bottom: 24px;
-}
-.grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin-bottom: 16px;
-}
-@media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+h1 { font-size: 24px; margin-bottom: 4px; }
+.subtitle { color: var(--muted); font-size: 13px; margin-bottom: 20px; line-height: 1.4; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+@media (max-width: 640px) { .grid { grid-template-columns: 1fr; } h1 { font-size: 22px; } }
 .card {
   background: var(--panel);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 20px;
+  border-radius: 10px;
+  padding: 18px;
 }
 .card h2 {
-  font-size: 13px;
+  font-size: 12px;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.6px;
   color: var(--muted);
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
-.big {
-  font-size: 36px;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-}
-.row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--border); }
+.big { font-size: 32px; font-weight: 600; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.status-line { display: flex; align-items: center; gap: 8px; font-size: 28px; font-weight: 600; }
+.row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); gap: 12px; }
 .row:last-child { border-bottom: none; }
-.row .label { color: var(--muted); font-size: 13px; }
-.row .value { font-size: 13px; font-variant-numeric: tabular-nums; }
+.row .label { color: var(--muted); font-size: 13px; flex-shrink: 0; }
+.row .value { font-size: 13px; font-variant-numeric: tabular-nums; text-align: right; }
 .up { color: var(--green); }
 .down { color: var(--red); }
-.dot {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  margin-right: 6px;
-  vertical-align: middle;
-}
+.dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
 .dot.live { background: var(--green); box-shadow: 0 0 8px var(--green); }
 .dot.stale { background: var(--red); }
 .dot.unknown { background: var(--muted); }
-footer { color: var(--muted); font-size: 12px; text-align: center; margin-top: 24px; }
-.badge {
-  display: inline-block;
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-}
+footer { color: var(--muted); font-size: 11px; text-align: center; margin-top: 20px; line-height: 1.5; }
+.badge { display: inline-block; padding: 3px 10px; border-radius: 5px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
 .badge.long { background: rgba(63,185,80,0.15); color: var(--green); }
 .badge.flat { background: rgba(139,148,158,0.15); color: var(--muted); }
 .badge.unknown { background: rgba(139,148,158,0.15); color: var(--muted); }
@@ -92,30 +64,22 @@ footer { color: var(--muted); font-size: 12px; text-align: center; margin-top: 2
 <body>
 <div class="container">
   <h1>🤖 BTC Bot Dashboard</h1>
-  <div class="subtitle">Paper trading · 3m+5m+15m MTF strategy · Updates every few seconds</div>
+  <div class="subtitle">Paper trading · 3m+5m+15m MTF strategy</div>
 
   <div class="grid">
     <div class="card">
       <h2>BTC / USDT</h2>
       <div class="big" id="btc-price">—</div>
-      <div class="row" style="margin-top: 12px;">
-        <span class="label">24h change</span>
-        <span class="value" id="btc-change">—</span>
-      </div>
-      <div class="row">
-        <span class="label">24h high</span>
-        <span class="value" id="btc-high">—</span>
-      </div>
-      <div class="row">
-        <span class="label">24h low</span>
-        <span class="value" id="btc-low">—</span>
+      <div class="row" style="margin-top: 10px;">
+        <span class="label">Source</span>
+        <span class="value" id="btc-source">via bot</span>
       </div>
     </div>
 
     <div class="card">
       <h2>Bot Status</h2>
-      <div class="big" id="bot-status"><span class="dot unknown"></span><span id="bot-state">Loading…</span></div>
-      <div class="row" style="margin-top: 12px;">
+      <div class="status-line"><span class="dot unknown" id="status-dot"></span><span id="bot-state">Loading…</span></div>
+      <div class="row" style="margin-top: 10px;">
         <span class="label">Position</span>
         <span class="value"><span class="badge unknown" id="bot-position">—</span></span>
       </div>
@@ -155,49 +119,37 @@ footer { color: var(--muted); font-size: 12px; text-align: center; margin-top: 2
   </div>
 
   <footer>
-    BTC price: Binance public API · Bot status: VM publisher → GitHub
+    All data published from VM → GitHub · refreshes every 30s
   </footer>
 </div>
 
 <script>
 const STATUS_URL = "https://raw.githubusercontent.com/samandar44111/Trading-bot/main/status.json";
-const fmtUSD = n => n == null ? "—" : "$" + Number(n).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
-const fmtPct = n => n == null ? "—" : (n >= 0 ? "+" : "") + Number(n).toFixed(2) + "%";
+const fmtUSD = n => (n == null || isNaN(n)) ? "—" : "$" + Number(n).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+const fmtPct = n => (n == null || isNaN(n)) ? "—" : (n >= 0 ? "+" : "") + Number(n).toFixed(2) + "%";
 
-async function updateBTC() {
-  try {
-    const r = await fetch("https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT");
-    const d = await r.json();
-    document.getElementById("btc-price").textContent = fmtUSD(d.lastPrice);
-    const change = parseFloat(d.priceChangePercent);
-    const el = document.getElementById("btc-change");
-    el.textContent = fmtPct(change);
-    el.className = "value " + (change >= 0 ? "up" : "down");
-    document.getElementById("btc-high").textContent = fmtUSD(d.highPrice);
-    document.getElementById("btc-low").textContent = fmtUSD(d.lowPrice);
-  } catch (e) {
-    document.getElementById("btc-price").textContent = "Error";
-  }
-}
-
-async function updateBot() {
+async function update() {
   try {
     const r = await fetch(STATUS_URL + "?t=" + Date.now());
-    if (!r.ok) throw new Error("not found yet");
+    if (!r.ok) throw new Error("status.json not found yet");
     const s = await r.json();
 
+    // BTC price (from VM, works on all networks)
+    document.getElementById("btc-price").textContent = fmtUSD(s.btc_price);
+
+    // Bot status freshness
     const ageSec = (Date.now() - new Date(s.updated_at).getTime()) / 1000;
-    const dot = ageSec < 180 ? "live" : "stale";
-    document.getElementById("bot-status").innerHTML =
-      `<span class="dot ${dot}"></span><span>${s.running ? "Active" : "Stopped"}</span>`;
+    const dot = document.getElementById("status-dot");
+    dot.className = "dot " + (ageSec < 180 ? "live" : "stale");
+    document.getElementById("bot-state").textContent =
+      ageSec >= 180 ? "Stale" : (s.running ? "Active" : "Stopped");
 
     const posEl = document.getElementById("bot-position");
     posEl.textContent = s.position || "FLAT";
     posEl.className = "badge " + ((s.position || "flat").toLowerCase());
 
     document.getElementById("bot-equity").textContent = fmtUSD(s.equity);
-    document.getElementById("bot-updated").textContent =
-      new Date(s.updated_at).toLocaleString();
+    document.getElementById("bot-updated").textContent = new Date(s.updated_at).toLocaleString();
 
     if (s.last_trade) {
       const t = s.last_trade;
@@ -210,16 +162,13 @@ async function updateBot() {
       document.getElementById("trade-time").textContent = t.exit_time ? new Date(t.exit_time).toLocaleString() : "—";
     }
   } catch (e) {
-    document.getElementById("bot-status").innerHTML =
-      `<span class="dot unknown"></span><span>Waiting for publisher…</span>`;
+    document.getElementById("bot-state").textContent = "Waiting…";
+    document.getElementById("status-dot").className = "dot unknown";
   }
 }
 
-updateBTC();
-updateBot();
-setInterval(updateBTC, 5000);
-setInterval(updateBot, 15000);
+update();
+setInterval(update, 30000);
 </script>
 </body>
 </html>
-
