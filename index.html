@@ -5,96 +5,57 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BTC Bot Dashboard</title>
 <style>
-:root{--bg:#0b0e14;--panel:#161b22;--text:#e6edf3;--muted:#8b949e;--green:#3fb950;--red:#f85149;--border:#30363d;}
-*{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:16px;-webkit-text-size-adjust:100%;}
-.container{max-width:900px;margin:0 auto;}
-h1{font-size:24px;margin-bottom:4px;}
-.subtitle{color:var(--muted);font-size:13px;margin-bottom:20px;line-height:1.4;}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
-@media(max-width:640px){.grid{grid-template-columns:1fr;}h1{font-size:22px;}}
-.card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:18px;}
-.card h2{font-size:12px;text-transform:uppercase;letter-spacing:0.6px;color:var(--muted);margin-bottom:10px;}
-.big{font-size:32px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1.1;}
-.status-line{display:flex;align-items:center;gap:8px;font-size:28px;font-weight:600;}
-.row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);gap:12px;}
-.row:last-child{border-bottom:none;}
-.row .label{color:var(--muted);font-size:13px;flex-shrink:0;}
-.row .value{font-size:13px;font-variant-numeric:tabular-nums;text-align:right;}
-.up{color:var(--green);}.down{color:var(--red);}
-.dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
-.dot.live{background:var(--green);box-shadow:0 0 8px var(--green);}
-.dot.stale{background:var(--red);}
-.dot.unknown{background:var(--muted);}
-footer{color:var(--muted);font-size:11px;text-align:center;margin-top:20px;line-height:1.5;}
-.badge{display:inline-block;padding:3px 10px;border-radius:5px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;}
-.badge.long{background:rgba(63,185,80,0.15);color:var(--green);}
-.badge.flat{background:rgba(139,148,158,0.15);color:var(--muted);}
-.badge.unknown{background:rgba(139,148,158,0.15);color:var(--muted);}
+body{font-family:-apple-system,system-ui,sans-serif;background:#0b0e14;color:#e6edf3;padding:16px;}
+.card{background:#161b22;border:1px solid #30363d;border-radius:10px;padding:18px;margin-bottom:14px;}
+h1{font-size:22px;}
+.big{font-size:32px;font-weight:600;}
+.row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #30363d;}
+.label{color:#8b949e;font-size:13px;}
+#debug{background:#2d1b1b;color:#f85149;padding:12px;border-radius:8px;font-size:12px;font-family:monospace;white-space:pre-wrap;word-break:break-all;margin-bottom:14px;}
+.up{color:#3fb950;}.down{color:#f85149;}
 </style>
 </head>
 <body>
-<div class="container">
-  <h1>🤖 BTC Bot Dashboard</h1>
-  <div class="subtitle">Paper trading · 3m+5m+15m MTF strategy</div>
-  <div class="grid">
-    <div class="card">
-      <h2>BTC / USDT</h2>
-      <div class="big" id="btc-price">—</div>
-      <div class="row" style="margin-top:10px;">
-        <span class="label">Source</span><span class="value">via bot</span>
-      </div>
-    </div>
-    <div class="card">
-      <h2>Bot Status</h2>
-      <div class="status-line"><span class="dot unknown" id="status-dot"></span><span id="bot-state">Loading…</span></div>
-      <div class="row" style="margin-top:10px;"><span class="label">Position</span><span class="value"><span class="badge unknown" id="bot-position">—</span></span></div>
-      <div class="row"><span class="label">Equity (paper)</span><span class="value" id="bot-equity">—</span></div>
-      <div class="row"><span class="label">Last updated</span><span class="value" id="bot-updated">—</span></div>
-    </div>
-  </div>
-  <div class="card">
-    <h2>Last Trade</h2>
-    <div class="row"><span class="label">Side</span><span class="value" id="trade-side">—</span></div>
-    <div class="row"><span class="label">Entry price</span><span class="value" id="trade-entry">—</span></div>
-    <div class="row"><span class="label">Exit price</span><span class="value" id="trade-exit">—</span></div>
-    <div class="row"><span class="label">P&L</span><span class="value" id="trade-pnl">—</span></div>
-    <div class="row"><span class="label">Time</span><span class="value" id="trade-time">—</span></div>
-  </div>
-  <footer>All data published from VM → GitHub · refreshes every 30s</footer>
+<h1>🤖 BTC Bot Dashboard</h1>
+<div id="debug">Starting…</div>
+<div class="card">
+  <h2>BTC / USDT</h2>
+  <div class="big" id="btc-price">—</div>
 </div>
+<div class="card">
+  <h2>Bot Status</h2>
+  <div class="big" id="bot-state">Loading…</div>
+  <div class="row"><span class="label">Position</span><span id="bot-position">—</span></div>
+  <div class="row"><span class="label">Equity</span><span id="bot-equity">—</span></div>
+  <div class="row"><span class="label">Updated</span><span id="bot-updated">—</span></div>
+</div>
+
 <script>
 const STATUS_URL="https://raw.githubusercontent.com/samandar44111/Trading-bot/main/status.json";
-const fmtUSD=n=>(n==null||isNaN(n))?"—":"$"+Number(n).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
-const fmtPct=n=>(n==null||isNaN(n))?"—":(n>=0?"+":"")+Number(n).toFixed(2)+"%";
+const dbg=document.getElementById("debug");
+const fmtUSD=n=>(n==null||isNaN(n))?"—":"$"+Number(n).toLocaleString();
+
 async function update(){
   try{
+    dbg.textContent="Fetching status.json…";
     const r=await fetch(STATUS_URL+"?t="+Date.now());
-    if(!r.ok)throw new Error("not found");
-    const s=await r.json();
+    dbg.textContent="HTTP status: "+r.status;
+    if(!r.ok)throw new Error("HTTP "+r.status);
+    const txt=await r.text();
+    dbg.textContent="Got "+txt.length+" chars. Parsing…";
+    const s=JSON.parse(txt);
+    dbg.textContent="✓ Parsed OK. btc_price="+s.btc_price+" updated_at="+s.updated_at;
     document.getElementById("btc-price").textContent=fmtUSD(s.btc_price);
-    const ageSec=(Date.now()-new Date(s.updated_at).getTime())/1000;
-    document.getElementById("status-dot").className="dot "+(ageSec<180?"live":"stale");
-    document.getElementById("bot-state").textContent=ageSec>=180?"Stale":(s.running?"Active":"Stopped");
-    const posEl=document.getElementById("bot-position");
-    posEl.textContent=s.position||"FLAT";
-    posEl.className="badge "+((s.position||"flat").toLowerCase());
+    document.getElementById("bot-state").textContent=s.running?"Active":"Stopped";
+    document.getElementById("bot-position").textContent=s.position||"—";
     document.getElementById("bot-equity").textContent=fmtUSD(s.equity);
     document.getElementById("bot-updated").textContent=new Date(s.updated_at).toLocaleString();
-    if(s.last_trade){
-      const t=s.last_trade;
-      document.getElementById("trade-side").textContent=t.side||"—";
-      document.getElementById("trade-entry").textContent=fmtUSD(t.entry_price);
-      document.getElementById("trade-exit").textContent=fmtUSD(t.exit_price);
-      const p=document.getElementById("trade-pnl");
-      p.textContent=fmtPct(t.pnl_pct);
-      p.className="value "+((t.pnl_pct||0)>=0?"up":"down");
-      document.getElementById("trade-time").textContent=t.exit_time?new Date(t.exit_time).toLocaleString():"—";
-    }
   }catch(e){
-    document.getElementById("bot-state").textContent="Waiting…";
-    document.getElementById("status-dot").className="dot unknown";
+    dbg.textContent="❌ ERROR: "+e.message+"\n\nThis is why it won't load.";
   }
 }
 update();
-setInterval(update,30000);
+setInterval(update,10000);
+</script>
+</body>
+</html>
