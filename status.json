@@ -1,11 +1,11 @@
 {
-  "updated_at": "2026-06-08T15:01:24.379554+00:00",
+  "updated_at": "2026-06-08T15:02:26.806618+00:00",
   "running": false,
   "strategy": "RSI + EMA",
   "position": "FLAT",
   "equity": 100,
-  "btc_price": 64035.99,
-  "rsi": 56.32,
+  "btc_price": 64048.46,
+  "rsi": 62.22,
   "in_position": false,
   "buy_price": 0,
   "daily_profit_loss": 0
